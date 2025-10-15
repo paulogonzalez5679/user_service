@@ -8,10 +8,18 @@ from bson import ObjectId
 router = APIRouter()
 
 
-#pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def hash_password(password: str) -> str:
+    password_bytes = password.encode("utf-8")
+    if len(password_bytes) > 72:
+        password_bytes = password_bytes[:72]
+        while True:
+            try:
+                password = password_bytes.decode("utf-8")
+                break
+            except UnicodeDecodeError:
+                password_bytes = password_bytes[:-1]
     return pwd_context.hash(password)
 
 
@@ -22,7 +30,7 @@ async def get_collection():
 @router.post("/", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 async def create_user(user: UserCreate):
     coll = await get_collection()
-    # Unique email check
+    # Verificacion de email existente
     existing = await coll.find_one({"email": user.email})
     if existing:
         raise HTTPException(status_code=400, detail="Email already registered")
