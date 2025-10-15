@@ -3,19 +3,7 @@ __pycache__
 *.py[cod]
 *.pyo
 
-# Node modules and dependency files
 # Environment files
 /.env
 /fastAPI
 
-# Angular CLI and build artefacts
-/.angular-cli.json
-/.ng/
-
-# TypeScript cache
-*.tsbuildinfo
-
-# Logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
