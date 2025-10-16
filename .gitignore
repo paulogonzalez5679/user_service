@@ -148,3 +148,10 @@ logs/
 
 # MongoDB data
 data/
+
+#envs
+.env.*
+.env.local
+.env.prod
+/.env.prod.local
+/.env.prod 
