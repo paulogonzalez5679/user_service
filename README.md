@@ -197,29 +197,12 @@ Ejemplo de log:
 - **Límite de 72 bytes** para contraseñas (bcrypt)
 - **Sanitización automática** de datos
 
-## 🧪 Testing
-
-```bash
-# Ejecutar tests (cuando estén implementados)
-pytest
-
-# Con cobertura
-pytest --cov=.
-```
-
 ## 📈 Monitoreo
 
 - **Logs estructurados** en consola
 - **Métricas de rendimiento** en headers HTTP
 - **Health checks** automáticos
 
-## 🤝 Contribución
-
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
 
 ## 📝 Licencia
 
@@ -227,11 +210,4 @@ Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más det
 
 ## 👥 Autores
 
-- **Paulo González** - *Desarrollo inicial* - [@paulogonzalez](https://github.com/paulogonzalez)
-
-## 🙏 Agradecimientos
-
-- FastAPI por el framework web
-- MongoDB por la base de datos
-- Pydantic por la validación de datos
-- Docker por la containerización
+- **Paulo González** - *Dev* - [@paulogonzalez](https://github.com/paulogonzalez)
