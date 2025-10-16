@@ -3,6 +3,10 @@ import asyncio
 from motor.motor_asyncio import AsyncIOMotorClient
 from dotenv import load_dotenv
 
+"""
+Módulo de configuración y conexión a la base de datos MongoDB.
+Incluye carga de variables de entorno, validación y funciones utilitarias.
+"""
 # =========================================================
 # 1. Cargar variables de entorno
 # =========================================================
@@ -38,6 +42,10 @@ db = client[MONGO_DB]
 # 3. Validación de variables
 # =========================================================
 def _validate_env():
+    """
+    Valida que las variables de entorno necesarias estén definidas.
+    Lanza excepción si falta alguna.
+    """
     errors = []
     if not MONGO_URI:
         errors.append("MONGO_URI no está definida")
@@ -50,7 +58,10 @@ def _validate_env():
 # 4. Inicialización de la BD
 # =========================================================
 async def init():
-    """Inicializa la BD y crea índice único en email."""
+    """
+    Inicializa la base de datos y crea el índice único en el campo email de la colección users.
+    Útil para preparar la base antes de usar la API.
+    """
     _validate_env()
     users = db.get_collection("users")
     try:
@@ -65,14 +76,19 @@ async def init():
 # 5. Conectar y desconectar
 # =========================================================
 async def connect_to_mongo():
-    """Devuelve la instancia global de la base de datos."""
+    """
+    Establece y devuelve la instancia global de la base de datos MongoDB.
+    Lanza excepción si la conexión falla.
+    """
     if db is None:
         raise RuntimeError("❌ La conexión a la BD no se inicializó correctamente.")
     print(f"✅ Conexión establecida a MongoDB ({ENV})")
     return db
 
 async def close_mongo_connection():
-    """Cierra la conexión a la base de datos."""
+    """
+    Cierra la conexión global a la base de datos MongoDB.
+    """
     if client:
         client.close()
         print("🛑 Conexión a MongoDB cerrada.")
@@ -81,6 +97,10 @@ async def close_mongo_connection():
 # 6. Ejecución directa para crear índice inicial
 # =========================================================
 if __name__ == "__main__":
+    """
+    Permite inicializar la base de datos ejecutando el script directamente.
+    Crea el índice único en email.
+    """
     try:
         asyncio.run(init())
     except Exception as exc:

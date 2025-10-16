@@ -4,6 +4,10 @@ from typing import Optional
 
 
 class PyObjectId(ObjectId):
+	"""
+	Validador personalizado para ObjectId de MongoDB en modelos Pydantic.
+	Permite validar y serializar ObjectId como string.
+	"""
 	@classmethod
 	def __get_validators__(cls):
 		yield cls.validate
@@ -20,29 +24,59 @@ class PyObjectId(ObjectId):
 
 
 class UserBase(BaseModel):
-    name: str = Field(..., min_length=2, max_length=100)
-    email: EmailStr
+	"""
+	Modelo base de usuario.
+	name: Nombre completo (2-100 caracteres)
+	email: Email válido
+	"""
+	name: str = Field(..., min_length=2, max_length=100)
+	email: EmailStr
 
 
 class UserCreate(UserBase):
-    password: str = Field(..., min_length=8)
+	"""
+	Modelo para creación de usuario.
+	password: Contraseña (mínimo 8 caracteres)
+	Ejemplo:
+		{
+			"name": "Juan Pérez",
+			"email": "juan.perez@email.com",
+			"password": "MiClaveSegura123"
+		}
+	"""
+	password: str = Field(..., min_length=8)
 
 
 class UserUpdate(BaseModel):
-    name: Optional[str] = Field(None, min_length=2, max_length=100)
-    email: Optional[EmailStr] = None
-    password: Optional[str] = Field(None, min_length=8)
+	"""
+	Modelo para actualización parcial de usuario.
+	Permite modificar nombre, email y/o contraseña.
+	"""
+	name: Optional[str] = Field(None, min_length=2, max_length=100)
+	email: Optional[EmailStr] = None
+	password: Optional[str] = Field(None, min_length=8)
 
 
 class UserInDB(UserBase):
-    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
-    hashed_password: str
+	"""
+	Modelo de usuario almacenado en la base de datos.
+	Incluye id y contraseña hasheada.
+	"""
+	id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+	hashed_password: str
 
 
 class Config:
-    allow_population_by_field_name = True
-    json_encoders = {ObjectId: str}
+	"""
+	Configuración para serialización de modelos con ObjectId.
+	"""
+	allow_population_by_field_name = True
+	json_encoders = {ObjectId: str}
 
 
 class UserResponse(UserBase):
-    id: str
+	"""
+	Modelo de respuesta para usuario (API).
+	Incluye id como string.
+	"""
+	id: str

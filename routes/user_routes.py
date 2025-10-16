@@ -11,6 +11,14 @@ router = APIRouter()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def hash_password(password: str) -> str:
+    """
+    Genera el hash seguro de una contraseña usando bcrypt.
+    Limita la longitud a 72 bytes y maneja errores de decodificación.
+    Args:
+        password (str): Contraseña en texto plano.
+    Returns:
+        str: Contraseña hasheada.
+    """
     password_bytes = password.encode("utf-8")
     if len(password_bytes) > 72:
         password_bytes = password_bytes[:72]
@@ -24,11 +32,31 @@ def hash_password(password: str) -> str:
 
 
 async def get_collection():
-	return database.db.get_collection("users")
+    """
+    Devuelve la colección 'users' de la base de datos MongoDB.
+    Returns:
+        Collection: Colección de usuarios.
+    """
+    return database.db.get_collection("users")
 
 
 @router.post("/", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 async def create_user(user: UserCreate):
+    """
+    Crea un nuevo usuario en la base de datos.
+    - Verifica que el email no esté registrado.
+    - Hashea la contraseña antes de guardar.
+    Args:
+        user (UserCreate): Datos del usuario a crear.
+    Returns:
+        dict: Usuario creado (id, name, email).
+    Ejemplo de uso:
+        {
+            "name": "Juan Pérez",
+            "email": "juan.perez@email.com",
+            "password": "MiClaveSegura123"
+        }
+    """
     coll = await get_collection()
     # Verificacion de email existente
     existing = await coll.find_one({"email": user.email})
@@ -45,6 +73,13 @@ async def create_user(user: UserCreate):
 
 @router.get("/{user_id}", response_model=UserResponse)
 async def get_user(user_id: str):
+    """
+    Obtiene los datos de un usuario por su ID.
+    Args:
+        user_id (str): ID del usuario (MongoDB ObjectId).
+    Returns:
+        dict: Usuario encontrado (id, name, email).
+    """
     coll = await get_collection()
     if not ObjectId.is_valid(user_id):
         raise HTTPException(status_code=400, detail="Invalid user id")
@@ -56,6 +91,16 @@ async def get_user(user_id: str):
 
 @router.put("/{user_id}", response_model=UserResponse)
 async def update_user(user_id: str, user_update: UserUpdate):
+    """
+    Actualiza los datos de un usuario existente.
+    - Permite cambiar nombre, email y/o contraseña.
+    - Verifica unicidad de email.
+    Args:
+        user_id (str): ID del usuario.
+        user_update (UserUpdate): Datos a actualizar.
+    Returns:
+        dict: Usuario actualizado (id, name, email).
+    """
     coll = await get_collection()
     if not ObjectId.is_valid(user_id):
         raise HTTPException(status_code=400, detail="Invalid user id")
@@ -75,6 +120,13 @@ async def update_user(user_id: str, user_update: UserUpdate):
 
 @router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_user(user_id: str):
+    """
+    Elimina un usuario por su ID.
+    Args:
+        user_id (str): ID del usuario.
+    Returns:
+        None
+    """
     coll = await get_collection()
     if not ObjectId.is_valid(user_id):
         raise HTTPException(status_code=400, detail="Invalid user id")
